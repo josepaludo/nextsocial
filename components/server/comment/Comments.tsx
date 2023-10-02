@@ -1,20 +1,22 @@
 import { CommentWithUserType } from "@/types";
 import { getUser } from "@/serverfunctions";
 import ClientComment from "@/components/client/comment/ClientComment";
+import { User } from "@prisma/client";
 
 
 export default async function Comments(
-    {comments}: {comments: CommentWithUserType[]}
+    {comments, currentUser}: {comments: CommentWithUserType[], currentUser: User|null}
 ) {
     
-    const currentUser = await getUser()
+    const user = currentUser ? currentUser : await getUser()
+
     return <>
         { comments.length > 0 ?
             comments.map((comment, key) => (
                 <ClientComment
                     comment={comment}
                     key={key}
-                    currentUser={currentUser}
+                    currentUser={user}
                 />
             ))
         :

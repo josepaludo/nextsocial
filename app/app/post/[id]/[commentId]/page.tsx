@@ -1,8 +1,10 @@
+import ClientComment from "@/components/client/comment/ClientComment"
 import ContainerWithSideLine from "@/components/general/ContainerWithSideLine"
-import Comment from "@/components/server/comment/Comment"
+// import Comment from "@/components/server/comment/Comment"
 import Comments from "@/components/server/comment/Comments"
 import LargePost from "@/components/server/post/LargePost"
 import { prisma } from "@/prisma/db"
+import { getUser } from "@/serverfunctions"
 import { PostWithUserLikesCommentsType } from "@/types"
 
 
@@ -16,14 +18,16 @@ export default async function CommentPage(
     if (!post) return <>Post not found.</>
     const comment = await getComment(commentId)
     if (!comment) return <>Comment not found.</>
+    const currentUser = await getUser()
 
     return <>
         <LargePost post={post} />
 
         <ContainerWithSideLine>
-            <Comment comment={comment} className="flex-grow" />
+            {/* <Comment comment={comment} className="flex-grow" /> */}
+            <ClientComment comment={comment} currentUser={currentUser} />
             <ContainerWithSideLine>
-                <Comments comments={comment.comments} />
+                <Comments comments={comment.comments} currentUser={currentUser} />
             </ContainerWithSideLine>
         </ContainerWithSideLine>
     </>
