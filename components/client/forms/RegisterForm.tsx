@@ -26,13 +26,13 @@ export default function RegisterForm() {
             email.value === "" ||
             password1.value === "" ||
             password2.value === ""
-        ) return;
-        [username, email, password1, password2].forEach(field => field.value = "")
+        ) return
         const data: LoginRegisterRequestForm = {
             username: username.value,
             email: email.value,
             password: password1.value,
-        }
+        };
+        [username, email, password1, password2].forEach(field => field.value = "")
         axios.post('/api/register', data).then(function(response) {
             const {success} = response.data as LoginRegisterResponseData
             if (!success) {

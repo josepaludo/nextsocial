@@ -9,6 +9,7 @@ export default async function SideBar(
     {className}: {className?: string}
 ) {
     const user = await getUser()
+    if (user) console.log(user.name, "a", user.email)
 
     return (
         <div

@@ -6,6 +6,7 @@ import bcrypt from "bcrypt"
 
 export async function POST(req: Request) {
     const {username, email, password} = await req.json() as LoginRegisterRequestForm
+    console.log(username)
     const data: LoginRegisterResponseData = { success: false }
     const user = await prisma.user.findUnique({where: {email: email}})
     if (user) return NextResponse.json(data)
