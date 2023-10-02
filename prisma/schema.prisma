@@ -1,0 +1,139 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+model User {
+  id Int @id @default(autoincrement())
+  name String
+  email String @unique
+  password String
+  bio String?
+
+  posts Post[]
+  likes Like[]
+
+  comments Comment[]
+  commentLikes CommentLike[]
+
+  groupMembers GroupMember[]
+  groupAdmins GroupAdmin[]
+  groupBanneds GroupBanned[]
+
+  followers Follower[] @relation("following")
+  followings Follower[] @relation("follower")
+}
+
+model Follower {
+  @@id([followerId, followingId])
+
+  follower User @relation("follower", fields: [followerId], references: [id])
+  followerId Int
+
+  following User @relation("following", fields: [followingId], references: [id])
+  followingId Int
+}
+
+model Post {
+  id Int @id @default(autoincrement())
+  title String
+  content String
+
+  user User @relation(fields: [userId], references: [id])
+  userId Int
+
+  group Group? @relation(fields: [groupId], references: [id])
+  groupId Int?
+
+  likes Like[]
+  comments Comment[]
+}
+
+model Like {
+  @@id([postId, userId])
+  value String @db.Char(1) // enum LikeValue {Null = "a", Up = "b", Down = "c"}
+
+  user User @relation(fields: [userId], references: [id])
+  userId Int
+
+  post Post @relation(fields: [postId], references: [id])
+  postId Int
+}
+
+model Comment {
+  id Int @id @default(autoincrement())
+  content String
+
+  user User @relation(fields: [userId], references: [id])
+  userId Int
+
+  post Post? @relation(fields: [postId], references: [id])
+  postId Int?
+
+  parentComment Comment? @relation("parentComment", fields: [commentId], references: [id])
+  commentId Int?
+
+  comments Comment[] @relation("parentComment")
+  likes CommentLike[]
+}
+
+model CommentLike {
+  @@id([commentId, userId])
+  value String @db.Char(1) // enum LikeValue {Null = "a", Up = "b", Down = "c"}
+
+  user User @relation(fields: [userId], references: [id])
+  userId Int
+
+  comment Comment @relation(fields: [commentId], references: [id])
+  commentId Int
+}
+
+model Group {
+  id Int @id @default(autoincrement())
+  name String @unique
+  description String
+
+  posts Post[]
+
+  groupMembers GroupMember[]
+  groupAdmins GroupAdmin[]
+  groupBanneds GroupBanned[]
+}
+
+model GroupMember {
+  @@id([groupId, userId])
+
+  group Group @relation(fields: [groupId], references: [id])
+  groupId Int
+
+  user User @relation(fields: [userId], references: [id])
+  userId Int
+}
+
+model GroupAdmin {
+  @@id([groupId, userId])
+
+  group Group @relation(fields: [groupId], references: [id])
+  groupId Int
+
+  user User @relation(fields: [userId], references: [id])
+  userId Int
+}
+
+model GroupBanned {
+  @@id([groupId, userId])
+
+  group Group @relation(fields: [groupId], references: [id])
+  groupId Int
+
+  user User @relation(fields: [userId], references: [id])
+  userId Int
+}
