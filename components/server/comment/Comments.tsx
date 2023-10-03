@@ -5,7 +5,7 @@ import { User } from "@prisma/client";
 
 
 export default async function Comments(
-    {comments, currentUser}: {comments: CommentWithUserType[], currentUser: User|null}
+    {comments, currentUser}: {comments: CommentWithUserType[], currentUser?: User|null}
 ) {
     
     const user = currentUser ? currentUser : await getUser()
