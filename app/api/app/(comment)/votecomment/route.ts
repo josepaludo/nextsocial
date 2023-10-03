@@ -18,7 +18,7 @@ export async function POST(req: Request) {
     return NextResponse.json(data)
 }
 
-export async function voteComment(
+async function voteComment(
     commentId: number, value: LikeValue, userId: number
 ) {
     const userLike = await prisma.commentLike.findUnique({
@@ -49,7 +49,7 @@ export async function voteComment(
     return like
 }
 
-export async function commentVoteUpsert(
+async function commentVoteUpsert(
     commentId: number, value: LikeValue, userId: number
 ) {
     const like = await prisma.commentLike.upsert({

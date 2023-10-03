@@ -12,7 +12,6 @@ export async function POST(req: Request) {
     if (!member) return res(data)
     const success = await removeMember(id, user.id)
     if (success) data.success = true
-    console.log(success)
     return res(data)
 }
 

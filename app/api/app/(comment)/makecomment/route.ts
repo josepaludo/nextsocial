@@ -1,6 +1,5 @@
 import { makeComment } from "@/serverfunctions"
-import { MakeCommentRequestForm, MakePostRequestForm } from "@/types"
-import { revalidatePath } from "next/cache"
+import { MakeCommentRequestForm } from "@/types"
 import { NextResponse } from "next/server"
 
 

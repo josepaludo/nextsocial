@@ -1,25 +1,23 @@
 import { prisma } from "@/prisma/db"
-import { LoginRegisterRequestForm, LoginRegisterResponseData, TokenEnum } from "@/types"
-import { NextResponse } from "next/server"
-import {cookies} from "next/headers"
+import { LoginRegisterRequestForm, LoginRegisterResponseData, LoginResponseType, TokenEnum } from "@/types"
+import { NextRequest, NextResponse } from "next/server"
 import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
 
 
-export async function POST(req: Request) {
-    const data: LoginRegisterResponseData = { success: false }
+export async function POST(req: NextRequest) {
+    const data: LoginResponseType = { token : undefined }
     const { username, email, password} =  await req.json() as LoginRegisterRequestForm 
     const user = await prisma.user.findUnique({where: {email: email}})
     if (!user || user.name !== username) return NextResponse.json(data)
     const passwordMatch = await bcrypt.compare(password, user.password)
-    if (passwordMatch) {
-        data.success = true
-        setAccessToken(username, email)
-    }
+    if (!passwordMatch) return NextResponse.json(data)
+    const token = getAccessToken(username, email)
+    data.token = token
     return NextResponse.json(data)
 }
 
-function setAccessToken(username: string, email: string): void {
+function getAccessToken(username: string, email: string) {
     const token = jwt.sign(
         {
             name: username,
@@ -28,12 +26,7 @@ function setAccessToken(username: string, email: string): void {
         },
         process.env.JWT_SECRET!
     )
-    cookies().set({
-        name: TokenEnum.accessToken,
-        value: token,
-        path: '/',
-        sameSite: "strict",
-    })
+    return token
 }
 
 function oneMonthFromToday() {

@@ -1,7 +1,7 @@
 "use client"
 
 import { FormEvent, useState } from "react"
-import { LoginRegisterRequestForm, LoginRegisterResponseData } from "@/types"
+import { LoginRegisterRequestForm, LoginRegisterResponseData, LoginResponseType, TokenEnum } from "@/types"
 import axios from "axios"
 import { useRouter } from "next/navigation"
 import { Status, Warning, useWarning } from "@/components/client/Warning"
@@ -9,6 +9,7 @@ import MediumButton from "@/components/general/MediumButton"
 import NarrowForm from "@/components/general/ShortForm"
 import Input from "@/components/general/Input"
 import { useToken } from "@/hooks"
+import { setCookie } from "cookies-next"
 
 
 export default function LoginForm() {
@@ -38,12 +39,20 @@ export default function LoginForm() {
         [username, email, password].forEach(field => field.value = "")
         axios.post('/api/login', data)
             .then( function(response) {
-                const {success} = response.data as LoginRegisterResponseData
-                if (!success) {
+                const {token} = response.data as LoginResponseType
+                if (!token) {
                     setDidLogin(Status.failure)
                     setCanSubmit(true)
                     return
                 }
+                setCookie(
+                    TokenEnum.accessToken,
+                    token,
+                    {
+                        path: "/",
+                        sameSite: "strict"
+                    }
+                )
                 setDidLogin(Status.success)
                 setTimeout(() => location.reload(), 1000)
             }).catch( function(error) {

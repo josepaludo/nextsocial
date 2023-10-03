@@ -1,16 +1,15 @@
 "use client"
 
+import { TokenEnum } from "@/types"
 import axios from "axios"
+import { deleteCookie } from "cookies-next"
 
 
 export default function Logout() {
 
     function handleClick() {
-        axios.post('/api/app/logout')
-            .then(function(response) {
-                const {success} = response.data
-                if (success) location.reload()
-            }).catch(function (error) {console.log(error)})
+        deleteCookie(TokenEnum.accessToken)
+        location.reload()
     }
 
     return (

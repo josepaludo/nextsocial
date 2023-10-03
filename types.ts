@@ -10,6 +10,10 @@ export type LoginRegisterResponseData = {
     success: boolean
 }
 
+export type LoginResponseType = {
+    token: string | undefined
+}
+
 export type JWTType = {
     name: string
     email: string
