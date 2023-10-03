@@ -1,6 +1,5 @@
 import ClientComment from "@/components/client/comment/ClientComment"
 import ContainerWithSideLine from "@/components/general/ContainerWithSideLine"
-// import Comment from "@/components/server/comment/Comment"
 import Comments from "@/components/server/comment/Comments"
 import LargePost from "@/components/server/post/LargePost"
 import { prisma } from "@/prisma/db"

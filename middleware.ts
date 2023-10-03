@@ -1,11 +1,10 @@
-import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from 'jose'
+import { TokenEnum } from "./types";
 
 
 export async function middleware(req: NextRequest) {
-    const cookie = cookies()
-    const token = cookie.get('accessToken')?.value
+    const token = req.cookies.get(TokenEnum.accessToken)?.value
     if (!token) return redirectToLogin(req)
     const secret = new TextEncoder().encode(process.env.JWT_SECRET)
     try {
